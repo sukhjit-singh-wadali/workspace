@@ -1,0 +1,58 @@
+package com.walnut.controllers;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.google.gson.Gson;
+import com.walnut.model.AbstractResponse;
+import com.walnut.model.AnswerModel;
+import com.walnut.model.MappingModel;
+import com.walnut.model.QuestionModel;
+import com.walnut.services.AnswerRepository;
+import com.walnut.services.MappingRepository;
+import com.walnut.services.QuestionRepository;
+
+@RestController
+public class AnswerController {
+
+	@Autowired
+	AnswerRepository answerRepo;
+	@Autowired
+	MappingRepository mappingRepo;
+	@Autowired
+	QuestionRepository questionRepo;
+
+	@PostMapping("/programAnswers")
+	@ResponseBody
+	public ResponseEntity<? extends AbstractResponse> Progarm(@RequestBody AnswerModel answerModel) {
+		AbstractResponse abstractResponse = new AbstractResponse();
+		answerRepo.insert(answerModel);
+
+		abstractResponse.setMessage("submitted");
+		MappingModel mappingModel = mappingRepo.find("basic");
+		QuestionModel questionModel;
+		for (int i = 0; i < mappingModel.getFlow().size(); i++) {
+			String curentQuesId = mappingModel.getFlow().get(i).getCurrent_question();
+
+			System.out.println(curentQuesId);
+			if (curentQuesId.equals(answerModel.getQuestion_id())) {
+				String nextQuestion = mappingModel.getFlow().get(i + 1).getNext_question();
+				questionModel = questionRepo.findOne(nextQuestion);
+				System.out.println(new Gson().toJson(questionModel));
+				return new ResponseEntity<QuestionModel>(questionModel, HttpStatus.OK);
+				
+			}
+
+		}
+
+		abstractResponse.setMessage("error");
+
+		return new ResponseEntity<AbstractResponse>(abstractResponse, HttpStatus.METHOD_NOT_ALLOWED);
+
+	}
+}

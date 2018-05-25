@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="org.eclipse.buildship.ui.wizard.project.import">
+		<item value="/home/sukhjit/workspace/walnut-ai" key="project_location"/>
+	</section>
+	<section name="org.eclipse.buildship.ui.wizard.project.creation">
+		<item value="VERSION" key="gradle_distribution_type"/>
+		<item value="true" key="use_default_location"/>
+		<item value="4.7" key="gradle_distribution_configuration"/>
+		<item value="/home/sukhjit/workspace/walnut-a" key="project_location"/>
+	</section>
+</section>

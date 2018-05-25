@@ -1,0 +1,92 @@
+package com.walnut.controllers;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.commons.logging.Log;
+import org.json.JSONObject;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.google.gson.JsonObject;
+import com.walnut.Utils;
+import com.walnut.Validation;
+import com.walnut.model.Calculate;
+import com.walnut.model.UserModel;
+
+@Controller
+public class LoginController {
+
+	@GetMapping("/hello-world")
+	@ResponseBody
+	public UserModel sayHello(@RequestParam(name = "name", required = false, defaultValue = "Stranger") String name) {
+		UserModel userModel = new UserModel();
+		userModel.setNames("Sukh");
+		userModel.setEmail("email.com");
+		return userModel;
+	}
+
+	@PostMapping("/add")
+	@ResponseBody
+	public ResponseEntity<String> addition(@RequestBody UserModel userModel) {
+
+		if (userModel.getName().equals("sukh")) {
+			return new ResponseEntity<String>("success", HttpStatus.OK);
+		} else {
+			return new ResponseEntity<String>("failed", HttpStatus.METHOD_NOT_ALLOWED);
+
+		}
+
+	}
+
+	@PostMapping("/addition")
+	@ResponseBody
+	public ResponseEntity<Integer> test(@RequestBody Calculate cal) {
+		int a = cal.getA();
+		int b = cal.getB();
+		Utils utils = new Utils();
+		int val = utils.add(a, b);
+		return new ResponseEntity<Integer>(val, HttpStatus.OK);
+	}
+
+	@PostMapping("/sign_up")
+	@ResponseBody
+	public ResponseEntity<Map<String, String>> validation(@RequestBody UserModel model) {
+		String name = model.getName();
+		String email = model.getEmail();
+		String pass = model.getPassword();
+
+		Validation validation = new Validation();
+		boolean resName = validation.isValidateName(name);
+		boolean resEmail = validation.isValidateEmail(email);
+		boolean resPass = validation.isValidatePass(pass);
+
+		System.out.println("name" + name + "email " + email + "password " + pass);
+
+		Map<String, String> map = new HashMap<>();
+
+		if (resName == true && resEmail == true) {
+			map.put("message", "Success");
+			return new ResponseEntity<Map<String, String>>(map, HttpStatus.OK);
+		} else if (!resEmail) {
+			map.put("message", "invalid email");
+			return new ResponseEntity<Map<String, String>>(map, HttpStatus.BAD_REQUEST);
+		} else if (!resName) {
+			map.put("message", "invalid username");
+			return new ResponseEntity<Map<String, String>>(map, HttpStatus.BAD_REQUEST);
+		} else if (!resPass) {
+			map.put("message", "invalid password");
+			return new ResponseEntity<Map<String, String>>(map, HttpStatus.BAD_REQUEST);
+		} else {
+			map.put("message", "invalid username or email or password");
+			return new ResponseEntity<Map<String, String>>(map, HttpStatus.BAD_REQUEST);
+		}
+
+	}
+}

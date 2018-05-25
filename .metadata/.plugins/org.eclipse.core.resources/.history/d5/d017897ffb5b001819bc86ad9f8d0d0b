@@ -1,0 +1,5 @@
+package com.walnut.security;
+
+public class JWTAuthenticationFilter {
+
+}

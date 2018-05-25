@@ -1,0 +1,28 @@
+package com.walnut.controllers;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.google.gson.Gson;
+import com.walnut.model.AbstractResponse;
+import com.walnut.model.QuestionModel;
+import com.walnut.services.QuestionRepository;
+
+@RestController
+public class QuestionController {
+
+	@Autowired
+	QuestionRepository questionRepo;
+
+	@GetMapping("/question")
+	@ResponseBody
+	public ResponseEntity<AbstractResponse> GetQuestion1() {
+		QuestionModel questionModel = questionRepo.findQuestion("program");
+		return new ResponseEntity<AbstractResponse>(questionModel, HttpStatus.OK);
+
+	}
+}

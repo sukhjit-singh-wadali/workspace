@@ -1,0 +1,40 @@
+package com.walnut.controllers;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
+import com.walnut.model.AbstractResponse;
+import com.walnut.model.QuestionModel;
+import com.walnut.model.QuestionnaireModel;
+import com.walnut.services.QuestionRepository;
+import com.walnut.services.QuestionnaireRepository;
+
+@RestController
+public class QuestionController {
+
+	@Autowired
+	QuestionRepository questionRepo;
+	@Autowired
+	QuestionnaireRepository questionnaireRepo;
+
+	@GetMapping("/question")
+	@ResponseBody
+	public ResponseEntity<? extends AbstractResponse> GetQuestion1() {
+		QuestionModel questionModel = questionRepo.findQuestion("program");
+		return new ResponseEntity<AbstractResponse>(questionModel, HttpStatus.OK);
+
+	}
+	
+	
+	@GetMapping("/questionnaire")
+	@ResponseBody
+	public ResponseEntity<? extends AbstractResponse> GetQuestionnaire() {
+		QuestionnaireModel questionnaireModel = questionnaireRepo.findAll("basic");
+		System.out.println(questionnaireModel);
+		return new ResponseEntity<AbstractResponse>(questionnaireModel, HttpStatus.OK);
+
+	}
+}

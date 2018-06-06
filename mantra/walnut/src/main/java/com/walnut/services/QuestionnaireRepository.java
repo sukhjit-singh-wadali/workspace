@@ -2,13 +2,13 @@ package com.walnut.services;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
-
 import com.walnut.model.QuestionnaireModel;
 
 
 public interface QuestionnaireRepository  extends MongoRepository<QuestionnaireModel, String> {
-
 	
-	@Query("{ 'bundle_id' : ?0}")
-	QuestionnaireModel findAll(String t);
+	
+	
+	@Query("{ 'bundle_id' : ?0 , 'language':?1 }")
+	QuestionnaireModel findUser(String a, String b);
 }

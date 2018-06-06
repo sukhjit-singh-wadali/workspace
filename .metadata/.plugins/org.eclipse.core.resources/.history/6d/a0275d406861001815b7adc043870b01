@@ -1,0 +1,32 @@
+public class Library {
+	public boolean someLibraryMethod() {
+		return true;
+	}
+	
+	
+
+	public static void main(String[] args) { 
+		
+
+		
+		Mongo mongo = new Mongo("localhost", 27017);
+		DB db = mongo.getDB("walnut-db");
+		CommandResult resultSet = db.getCollection("collectionName").getStats();
+		System.out.println(resultSet);
+		System.out.println(resultSet.get("count"));
+		System.out.println(resultSet.get("avgObjSize"))
+		
+		
+
+
+	}
+	
+
+	   // The compiler will now require that methods
+	   // changeCadence, changeGear, speedUp, and applyBrakes
+	   // all be implemented. Compilation will fail if those
+	   // methods are missing from this class.
+	
+
+}
+

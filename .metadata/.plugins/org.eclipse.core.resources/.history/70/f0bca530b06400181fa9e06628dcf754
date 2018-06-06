@@ -1,0 +1,139 @@
+package com.walnut.controllers;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
+import com.google.gson.Gson;
+import com.walnut.model.AbstractResponse;
+import com.walnut.model.SectionModel;
+import com.walnut.model.UserModel;
+import com.walnut.model.UserprofileModel;
+import com.walnut.model.SectionModel.Section;
+import com.walnut.services.SectionRepo;
+import com.walnut.services.UserProfileRepo;
+import com.walnut.services.UserRepository;
+import com.walnut.utils.Validation;
+
+@Controller
+public class UserController {
+	@Autowired
+	UserRepository userRepo;
+
+	@PostMapping("/login")
+	@ResponseBody
+	public ResponseEntity<? extends AbstractResponse> login(@RequestBody UserModel userModel) {
+		String email = userModel.getEmail();
+		String password = userModel.getPassword();
+		Validation validation = new Validation();
+		boolean validEmail = validation.isValidateEmail(email);
+		boolean valPassword = validation.isValidatePass(password);
+		UserModel model = userRepo.findUser(userModel.getEmail(), userModel.getPassword());
+
+		AbstractResponse abstractResponse = new AbstractResponse();
+		if (model != null) {
+			System.out.println(new Gson().toJson(model));
+			abstractResponse.setMessage("token");
+			return new ResponseEntity<AbstractResponse>(model, HttpStatus.OK);
+		} else if (!validEmail) {
+			abstractResponse.setMessage("invalid  email");
+			return new ResponseEntity<AbstractResponse>(abstractResponse, HttpStatus.METHOD_NOT_ALLOWED);
+		} else if (!valPassword) {
+			abstractResponse.setMessage("invalid  password");
+			return new ResponseEntity<AbstractResponse>(abstractResponse, HttpStatus.METHOD_NOT_ALLOWED);
+		} else {
+			abstractResponse.setMessage("invalid email or password");
+			return new ResponseEntity<AbstractResponse>(abstractResponse, HttpStatus.METHOD_NOT_ALLOWED);
+		}
+	}
+
+	@PostMapping("/sign_up")
+	@ResponseBody
+	public ResponseEntity<? extends AbstractResponse> validation(@RequestBody UserModel model) {
+		String name = model.getName();
+		String email = model.getEmail();
+		String password = model.getPassword();
+		Validation validation = new Validation();
+		boolean validName = validation.isValidateName(name);
+		boolean validEmail = validation.isValidateEmail(email);
+		boolean valPassword = validation.isValidatePass(password);
+		AbstractResponse abstractResponse = new AbstractResponse();
+		if (validName && validEmail && valPassword) {
+			abstractResponse.setMessage("Success");
+			UserModel userModel = userRepo.findUser(model.getEmail());
+			if (userModel != null) {
+				abstractResponse.setMessage("user exists");
+				return new ResponseEntity<AbstractResponse>(abstractResponse, HttpStatus.BAD_REQUEST);
+			} else {
+				userRepo.insert(model);
+			}
+			return new ResponseEntity<AbstractResponse>(abstractResponse, HttpStatus.OK);
+		} else if (!validEmail) {
+			abstractResponse.setMessage("invalid email");
+			return new ResponseEntity<AbstractResponse>(abstractResponse, HttpStatus.BAD_REQUEST);
+		} else if (!validName) {
+			abstractResponse.setMessage("invalid username");
+			return new ResponseEntity<AbstractResponse>(abstractResponse, HttpStatus.BAD_REQUEST);
+		} else if (!valPassword) {
+			abstractResponse.setMessage("invalid password");
+			return new ResponseEntity<AbstractResponse>(abstractResponse, HttpStatus.BAD_REQUEST);
+		} else {
+			abstractResponse.setMessage("invalid username or email or password");
+
+			return new ResponseEntity<AbstractResponse>(abstractResponse, HttpStatus.BAD_REQUEST);
+		}
+
+	}
+
+	@Autowired
+	UserProfileRepo userProfile;
+	SectionRepo repo;
+
+	@PostMapping("/userProfile")
+	@ResponseBody
+	public ResponseEntity<? extends AbstractResponse> login(@RequestBody UserprofileModel userprofileModel) {
+
+		userProfile.insert(userprofileModel);
+
+		Section section = new Section();
+		section.setDuration("100000");
+		section.setImageUrl("");
+		section.setSectionType("basic");
+		section.setStatus("pending");
+		section.setName("MCQ");
+
+		Section sectionTwo = new Section();
+		sectionTwo.setDuration("100000");
+		sectionTwo.setImageUrl("");
+		sectionTwo.setSectionType("programming");
+		sectionTwo.setStatus("pending");
+		sectionTwo.setName("Coding");
+
+		Section sectionThree = new Section();
+		sectionThree.setDuration("100000");
+		sectionThree.setImageUrl("");
+		sectionThree.setSectionType("video");
+		sectionThree.setStatus("pending");
+		sectionThree.setName("Cam Round");
+
+		List<Section> list = new ArrayList<>();
+		list.add(section);
+		list.add(sectionTwo);
+		list.add(sectionThree);
+		SectionModel sectionModel = new SectionModel();
+		sectionModel.setUserId(userprofileModel.getUserId());
+		sectionModel.setSectionList(list);
+		repo.insert(sectionModel);
+		AbstractResponse abstractResponse = new AbstractResponse();
+		abstractResponse.setMessage("success");
+		return new ResponseEntity<AbstractResponse>(abstractResponse, HttpStatus.OK);
+
+	}
+
+}

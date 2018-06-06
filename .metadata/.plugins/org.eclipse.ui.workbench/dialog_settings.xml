@@ -7,10 +7,10 @@
 	<section name="org.eclipse.ui.preferences.keysPreferencePage">
 	</section>
 	<section name="org.eclipse.ui.internal.QuickAccess">
-		<item value="214" key="dialogHeight"/>
-		<item value="314" key="dialogWidth"/>
+		<item value="202" key="dialogHeight"/>
+		<item value="302" key="dialogWidth"/>
 		<list key="textEntries">
-			<item value="1"/>
+			<item value="2"/>
 		</list>
 		<list key="orderedElements">
 			<item value="org.eclipse.ui.console.ConsoleView"/>
@@ -20,6 +20,7 @@
 		</list>
 		<list key="textArray">
 			<item value="conso"/>
+			<item value="cons"/>
 		</list>
 	</section>
 	<section name="NewWizardAction">

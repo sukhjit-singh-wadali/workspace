@@ -1,5 +1,8 @@
 package com.walnut.controllers;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,14 +16,19 @@ import com.google.gson.Gson;
 import com.walnut.model.AbstractResponse;
 import com.walnut.model.BasicAnswerModel;
 import com.walnut.model.SectionModel;
+import com.walnut.model.UserprofileModel;
+import com.walnut.model.SectionModel.Section;
 import com.walnut.services.BasicAnswerRepository;
 import com.walnut.services.SectionRepo;
+import com.walnut.services.UserProfileRepo;
 
 @RestController
 public class SectionController {
 
 	@Autowired
 	BasicAnswerRepository basicAnsRepo;
+	@Autowired
+	SectionRepo repo;
 
 	@Autowired
 	SectionRepo sectionRepo;
@@ -51,12 +59,74 @@ public class SectionController {
 			sectionModel = new SectionModel();
 			sectionModel.setMessage("Nothing is assign to this user");
 			return new ResponseEntity<AbstractResponse>(sectionModel, HttpStatus.FORBIDDEN);
-
 		}
 		return new ResponseEntity<AbstractResponse>(sectionModel, HttpStatus.OK);
 	}
-	
-	
+
+	@Autowired
+	UserProfileRepo userProfileRepo;
 	
 
+	@PostMapping("/userProfile")
+	@ResponseBody
+	public ResponseEntity<? extends AbstractResponse> login(@RequestBody UserprofileModel userprofileModel) {
+		AbstractResponse abstractResponse = new AbstractResponse();
+
+		UserprofileModel userid = userProfileRepo.findUserProfile(userprofileModel.getUserId());
+		System.out.println(new Gson().toJson(userid) );
+		if (userid == null) {
+
+			userProfileRepo.insert(userprofileModel);
+			Section section = new Section();
+			section.setDuration("100000");
+			section.setImageUrl("");
+			section.setSectionType("basic");
+			section.setStatus("pending");
+			section.setName("MCQ");
+
+			Section sectionTwo = new Section();
+			sectionTwo.setDuration("100000");
+			sectionTwo.setImageUrl("");
+			sectionTwo.setSectionType("programming");
+			sectionTwo.setStatus("pending");
+			sectionTwo.setName("Coding");
+
+			Section sectionThree = new Section();
+			sectionThree.setDuration("100000");
+			sectionThree.setImageUrl("");
+			sectionThree.setSectionType("video");
+			sectionThree.setStatus("pending");
+			sectionThree.setName("Cam Round");
+
+			List<Section> list = new ArrayList<>();
+			list.add(section);
+			list.add(sectionTwo);
+			list.add(sectionThree);
+
+			SectionModel model = new SectionModel();
+			model.setUserId(userprofileModel.getUserId());
+			model.setSectionList(list);
+			repo.insert(model);
+			abstractResponse.setMessage("success");
+			return new ResponseEntity<AbstractResponse>(abstractResponse, HttpStatus.OK);
+		    } else {
+			abstractResponse.setMessage("profile completed");
+			return new ResponseEntity<AbstractResponse>(abstractResponse, HttpStatus.OK);
+			}
+
+	}
+	@PostMapping("/findUser")
+	@ResponseBody
+	public ResponseEntity<? extends AbstractResponse> findUser(@RequestBody UserprofileModel finduser) {
+		AbstractResponse abstractResponse = new AbstractResponse();
+		UserprofileModel model=userProfileRepo.findUserProfile(finduser.getUserId());
+		System.out.println(new Gson().toJson(model));
+		if(model!=null) {
+			abstractResponse.setMessage("success");
+			return new ResponseEntity<AbstractResponse>(abstractResponse, HttpStatus.OK);}
+		else {
+			abstractResponse.setMessage("unsuccess");
+			return new ResponseEntity<AbstractResponse>(abstractResponse, HttpStatus.OK);
+}
+		}
 }

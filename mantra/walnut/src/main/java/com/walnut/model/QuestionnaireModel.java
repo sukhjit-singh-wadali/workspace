@@ -9,7 +9,16 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class QuestionnaireModel extends AbstractResponse {
 	@Id
 	String id;
+	String language;
 	
+	public String getLanguage() {
+		return language;
+	}
+
+	public void setLanguage(String language) {
+		this.language = language;
+	}
+
 	String duration;
     public String getDuration() {
 		return duration;

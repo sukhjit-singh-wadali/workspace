@@ -1,17 +1,23 @@
 package com.walnut.controllers;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-
 import com.google.gson.Gson;
 import com.walnut.model.AbstractResponse;
+import com.walnut.model.SectionModel;
 import com.walnut.model.UserModel;
+import com.walnut.model.UserprofileModel;
+import com.walnut.model.SectionModel.Section;
+import com.walnut.services.SectionRepo;
+import com.walnut.services.UserProfileRepo;
 import com.walnut.services.UserRepository;
 import com.walnut.utils.Validation;
 
@@ -29,6 +35,7 @@ public class UserController {
 		boolean validEmail = validation.isValidateEmail(email);
 		boolean valPassword = validation.isValidatePass(password);
 		UserModel model = userRepo.findUser(userModel.getEmail(), userModel.getPassword());
+
 		AbstractResponse abstractResponse = new AbstractResponse();
 		if (model != null) {
 			System.out.println(new Gson().toJson(model));
@@ -84,5 +91,5 @@ public class UserController {
 
 	}
 
-  
+	
 }
